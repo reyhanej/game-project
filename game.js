@@ -8,15 +8,18 @@ class Game {
     itemCount
     constructor(options) {
         this.options = options
+        this.initializeGame()
     }
     initializeGame() {
         const { playBtn } = this.options
+
         if (!playBtn) throw new Error("play button class name is not defined")
         const playNode = document.querySelector(playBtn)
         if (!playNode) throw new Error("Can`t find play button in your DOM ")
-        playNode.addEventListener("click", this.play())
+        playNode.addEventListener("click", this.play)
     }
     play() {
+        console.log(this.options)
         const { level } = this.options
         if (!level) throw new Error("level class name is not defined")
         const levelNode = document.querySelector(level)
@@ -74,25 +77,29 @@ class Game {
     }
 
     createItem() {
+
         const flipCard = document.createElement("div")
         flipCard.classList.add("flip-card")
         document.querySelector("body").appendChild(flipCard)
         const flipCardInner = document.createElement("div")
         flipCardInner.classList.add("flip-card-inner")
         flipCard.appendChild(flipCardInner)
-        const flipCardFront = createElement("div")
+        const flipCardFront = document.createElement("div")
         flipCardFront.classList.add("flip-card-front")
         flipCardInner.appendChild(flipCardFront)
-        const flipCardBack = createElement("div")
+        const flipCardBack = document.createElement("div")
         flipCardBack.classList.add("flip-card-back")
         flipCardInner.appendChild(flipCardBack)
-        const img = createElement("img")
-        img.setAttribute("src", this.responseData[this.getRandomItem(this.itemCount)].url)
+        const img = document.createElement("img")
+        img.setAttribute("src", this.getRandomItemUrl())
         flipCardBack.appendChild(img)
 
     }
-    getRandomItem(max) {
-        return Math.floor(Math.random() * max)
+    getRandomItemUrl() {
+        const randomNum = Math.floor(Math.random() * this.itemCount)
+        return this.responseData[randomNum].download_url
+
+
     }
     showPicsTimer() {
         const showTimer = document.querySelector(".showTimer")
