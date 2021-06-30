@@ -6,6 +6,7 @@ class Game {
     rows;
     cols;
     itemCount;
+    imgLoadedCounter = 0;
     constructor(options) {
         this.options = options;
         this.initializeGame();
@@ -43,8 +44,16 @@ class Game {
             }
             document.querySelector(".container").appendChild(row)
         }
-        this.setActiveStateFlip();
-        this.showPicsTimer();
+        const checkInterval = setInterval(() => {
+            this.imagLoaded()
+            if (this.imgLoadedCounter == this.rows * this.cols) {
+                clearInterval(checkInterval);
+                setTimeout(() => {
+                    this.setActiveStateFlip();
+                    this.showPicsTimer();
+                }, 2000);
+            }
+        }, 1000);
     }
     setRowsAndCols() {
         switch (this.selectedLevel) {
@@ -84,6 +93,7 @@ class Game {
     }
 
     createItem() {
+        // const isLoaded = img.complete && img.naturalHeight !== 0;
         const flipCard = document.createElement("div");
         flipCard.classList.add("flip-card");
         const flipCardInner = document.createElement("div");
@@ -98,15 +108,27 @@ class Game {
         const img = document.createElement("img");
         img.classList.add("img")
         img.setAttribute("src", this.getRandomItemUrl());
-        // img.addEventListener("")
         flipCardBack.appendChild(img);
-
+        flipCard.addEventListener("click", (e) => {
+            flipCardInner.classList.add("active")
+        })
         return flipCard
+    }
+    imagLoaded() {
+        const images = document.querySelectorAll(".img")
+        images.forEach(img => {
+            if (img.complete && img.naturalHeight !== 0)
+                this.imgLoadedCounter++
+        })
     }
     setActiveStateFlip() {
         const flipCardsInner = document.querySelectorAll(".flip-card-inner")
-        flipCardsInner.forEach(flipCardInner => flipCardInner.classList.add("active"))
 
+        flipCardsInner.forEach((flipCardInner, index) => {
+            setTimeout(() => {
+                flipCardInner.classList.add("active")
+            }, 10 * index);
+        })
     }
     deactiveStateFlip() {
         const flipCardsInner = document.querySelectorAll(".flip-card-inner")
@@ -133,13 +155,18 @@ class Game {
                 this.seconds = 5;
                 break;
         }
+
         let timerId = setInterval(() => {
             this.seconds -= 1;
             showTimer.textContent = this.seconds;
             if (this.seconds <= 1) {
                 clearInterval(timerId);
                 this.deactiveStateFlip()
+
             }
         }, 1000);
+    }
+    doTheGame() {
+
     }
 }
