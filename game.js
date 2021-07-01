@@ -7,6 +7,8 @@ class Game {
     cols;
     itemCount;
     imgLoadedCounter = 0;
+    activeItems = 0
+    canItemsSelect = false
     constructor(options) {
         this.options = options;
         this.initializeGame();
@@ -51,9 +53,9 @@ class Game {
                 setTimeout(() => {
                     this.setActiveStateFlip();
                     this.showPicsTimer();
-                }, 2000);
+                }, 1000);
             }
-        }, 1000);
+        }, 500);
     }
     setRowsAndCols() {
         switch (this.selectedLevel) {
@@ -88,12 +90,14 @@ class Game {
             .then((response) => {
                 if (!response.data) throw new Error("can not get images");
                 this.responseData = response.data;
+                this.responseData.forEach(res => {
+                    res.counter = 0
+                })
             })
             .catch((e) => console.log(e));
     }
 
     createItem() {
-        // const isLoaded = img.complete && img.naturalHeight !== 0;
         const flipCard = document.createElement("div");
         flipCard.classList.add("flip-card");
         const flipCardInner = document.createElement("div");
@@ -107,10 +111,16 @@ class Game {
         flipCardInner.appendChild(flipCardBack);
         const img = document.createElement("img");
         img.classList.add("img")
-        img.setAttribute("src", this.getRandomItemUrl());
+        const rndItem = this.getRandomItem()
+        img.setAttribute("src", rndItem.download_url);
+        img.setAttribute("data-id", rndItem.id)
         flipCardBack.appendChild(img);
         flipCard.addEventListener("click", (e) => {
+            if (this.canItemsSelect === false) return
             flipCardInner.classList.add("active")
+            this.activeItems++
+                if (this.activeItems < 2) return
+            this.checkActiveItems()
         })
         return flipCard
     }
@@ -134,9 +144,34 @@ class Game {
         const flipCardsInner = document.querySelectorAll(".flip-card-inner")
         flipCardsInner.forEach(flipCardInner => flipCardInner.classList.remove("active"))
     }
-    getRandomItemUrl() {
+    getRandomItem() {
         const randomNum = Math.floor(Math.random() * this.itemCount);
-        return this.responseData[randomNum].download_url;
+        const randomItem = this.responseData[randomNum];
+        if (randomItem.counter < 2) {
+            randomItem.counter++
+                return randomItem
+        }
+        this.responseData.splice(randomNum, 0)
+        return this.getRandomItem()
+    }
+    checkActiveItems() {
+        const actives = document.querySelectorAll(".active")
+        const ids = []
+        actives.forEach(item => {
+            const id = item.getAttribute("data-id")
+            ids.push(id)
+        })
+        console.log(ids)
+        setTimeout(() => {
+            if (ids.every(v => v === ids[0])) {
+                actives.forEach(element => {
+                    element.remove()
+                });
+            } else
+                this.deactiveStateFlip()
+        }, 1000);
+
+
     }
     showPicsTimer() {
         const showTimer = document.querySelector(".showTimer");
@@ -155,18 +190,15 @@ class Game {
                 this.seconds = 5;
                 break;
         }
-
         let timerId = setInterval(() => {
             this.seconds -= 1;
             showTimer.textContent = this.seconds;
             if (this.seconds <= 1) {
                 clearInterval(timerId);
                 this.deactiveStateFlip()
-
+                this.canItemsSelect = true
             }
         }, 1000);
     }
-    doTheGame() {
 
-    }
 }
