@@ -155,16 +155,16 @@ class Game {
         return this.getRandomItem()
     }
     checkActiveItems() {
-        const actives = document.querySelectorAll(".active")
+        const activeImages = document.querySelectorAll(".active .flip-card-back .img")
         const ids = []
-        actives.forEach(item => {
-            const id = item.getAttribute("data-id")
+        activeImages.forEach(img => {
+            const id = img.getAttribute("data-id")
             ids.push(id)
         })
         console.log(ids)
         setTimeout(() => {
             if (ids.every(v => v === ids[0])) {
-                actives.forEach(element => {
+                activeImages.forEach(element => {
                     element.remove()
                 });
             } else
