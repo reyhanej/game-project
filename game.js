@@ -19,9 +19,9 @@ class Game {
         if (!playBtn) throw new Error("play button class name is not defined");
         const playNode = document.querySelector(playBtn);
         if (!playNode) throw new Error("Can`t find play button in your DOM ");
-        playNode.addEventListener("click", () => {
+        playNode.addEventListener("click", async() => {
             this.play();
-
+            await this.resetGame()
         });
     }
     play() {
@@ -113,14 +113,18 @@ class Game {
         img.classList.add("img")
         const rndItem = this.getRandomItem()
         img.setAttribute("src", rndItem.download_url);
-        img.setAttribute("data-id", rndItem.id)
         flipCardBack.appendChild(img);
+        flipCard.setAttribute("data-id", rndItem.id)
+
         flipCard.addEventListener("click", (e) => {
             if (this.canItemsSelect === false) return
+            if (flipCard.classList.contains("active")) return
+
             flipCardInner.classList.add("active")
             this.activeItems++
                 if (this.activeItems < 2) return
             this.checkActiveItems()
+
         })
         return flipCard
     }
@@ -154,25 +158,7 @@ class Game {
         this.responseData.splice(randomNum, 0)
         return this.getRandomItem()
     }
-    checkActiveItems() {
-        const actives = document.querySelectorAll(".active")
-        const ids = []
-        actives.forEach(item => {
-            const id = item.getAttribute("data-id")
-            ids.push(id)
-        })
-        console.log(ids)
-        setTimeout(() => {
-            if (ids.every(v => v === ids[0])) {
-                actives.forEach(element => {
-                    element.remove()
-                });
-            } else
-                this.deactiveStateFlip()
-        }, 1000);
 
-
-    }
     showPicsTimer() {
         const showTimer = document.querySelector(".showTimer");
         // showTimer.style.dispaly = "block";
@@ -198,7 +184,43 @@ class Game {
                 this.deactiveStateFlip()
                 this.canItemsSelect = true
             }
+
         }, 1000);
     }
+    checkActiveItems() {
+        const actives = document.querySelectorAll(".active")
+        const ids = []
+        actives.forEach(item => {
+            const id = item.getAttribute("data-id")
+            ids.push(id)
+        })
+        console.log(ids)
+        if (this.activeItems === 2) {
+            setTimeout(() => {
+                if (ids.every(v => v === ids[0])) {
+                    actives.forEach(element => {
+                        element.remove()
+                        this.activeItems = 0
+                    });
+                } else
+                    this.deactiveStateFlip()
+            }, 1000);
+        }
 
+
+    }
+    resetGame() {
+        const { playBtn } = this.options;
+
+        if (!playBtn) throw new Error("play button class name is not defined");
+        const playNode = document.querySelector(playBtn);
+        if (!playNode) throw new Error("Can`t find play button in your DOM ");
+
+        playNode.textContent = "Reset"
+        playNode.addEventListener("click", () => {
+            const container = document.querySelector(".container")
+            container.remove()
+            playNode.textContent = "Play"
+        })
+    }
 }
