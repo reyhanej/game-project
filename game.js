@@ -19,9 +19,14 @@ class Game {
         if (!playBtn) throw new Error("play button class name is not defined");
         const playNode = document.querySelector(playBtn);
         if (!playNode) throw new Error("Can`t find play button in your DOM ");
-        playNode.addEventListener("click", async() => {
-            this.play();
-            await this.resetGame()
+        playNode.addEventListener("click", () => {
+            if (playNode.textContent === "Play") {
+                this.play();
+                playNode.textContent = "Reset"
+            } else {
+                this.resetGame()
+            }
+
         });
     }
     play() {
@@ -114,7 +119,7 @@ class Game {
         const rndItem = this.getRandomItem()
         img.setAttribute("src", rndItem.download_url);
         flipCardBack.appendChild(img);
-        flipCard.setAttribute("data-id", rndItem.id)
+        flipCardInner.setAttribute("data-id", rndItem.id)
 
         flipCard.addEventListener("click", (e) => {
             if (this.canItemsSelect === false) return
@@ -146,7 +151,10 @@ class Game {
     }
     deactiveStateFlip() {
         const flipCardsInner = document.querySelectorAll(".flip-card-inner")
-        flipCardsInner.forEach(flipCardInner => flipCardInner.classList.remove("active"))
+        flipCardsInner.forEach(flipCardInner => {
+            flipCardInner.classList.remove("active")
+        })
+        this.activeItems = 0
     }
     getRandomItem() {
         const randomNum = Math.floor(Math.random() * this.itemCount);
@@ -194,33 +202,32 @@ class Game {
             const id = item.getAttribute("data-id")
             ids.push(id)
         })
-        console.log(ids)
-        if (this.activeItems === 2) {
-            setTimeout(() => {
-                if (ids.every(v => v === ids[0])) {
-                    actives.forEach(element => {
-                        element.remove()
-                        this.activeItems = 0
-                    });
-                } else
-                    this.deactiveStateFlip()
-            }, 1000);
-        }
+
+        setTimeout(() => {
+            if (ids.every(v => v === ids[0])) {
+                actives.forEach(element => {
+                    element.remove()
+                    this.activeItems--
+                })
+            } else
+                this.deactiveStateFlip()
+        }, 1000);
+
 
 
     }
     resetGame() {
-        const { playBtn } = this.options;
-
-        if (!playBtn) throw new Error("play button class name is not defined");
-        const playNode = document.querySelector(playBtn);
-        if (!playNode) throw new Error("Can`t find play button in your DOM ");
-
-        playNode.textContent = "Reset"
-        playNode.addEventListener("click", () => {
-            const container = document.querySelector(".container")
-            container.remove()
-            playNode.textContent = "Play"
-        })
+        const container = document.querySelector(".container")
+        container.innerHTML = ""
+        this.selectedLevel = null;
+        this.responseData = null;
+        this.seconds = null;
+        this.rows = null;
+        this.cols = null;
+        this.itemCount = null;
+        this.imgLoadedCounter = 0;
+        this.activeItems = 0
+        this.canItemsSelect = false
+        this.play()
     }
 }
