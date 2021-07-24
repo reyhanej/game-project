@@ -2,7 +2,8 @@ class Game {
     options;
     selectedLevel;
     responseData;
-    seconds;
+    showSecs;
+    pickSecs;
     rows;
     cols;
     itemCount;
@@ -36,11 +37,11 @@ class Game {
         if (!levelNode) throw new Error("Can`t find level element in your DOM");
         this.selectedLevel = levelNode.textContent;
 
+        this.setLevelSpecifiedProperties()
         this.createPicElements();
 
     }
     async createPicElements() {
-        this.setRowsAndCols()
         await this.getImages()
         for (let i = 0; i < this.rows; i++) {
             const row = document.createElement("div")
@@ -62,23 +63,31 @@ class Game {
             }
         }, 500);
     }
-    setRowsAndCols() {
+    setLevelSpecifiedProperties() {
         switch (this.selectedLevel) {
             case "Medium":
                 this.rows = 4;
                 this.cols = 4;
+                this.showSecs = 5
+                this.pickSecs = 30
                 break;
             case "Hard":
-                this.rows = 4;
-                this.cols = 6;
+                this.rows = 5;
+                this.cols = 4;
+                this.showSecs = 3
+                this.pickSecs = 20
                 break;
             case "Easy":
-                this.rows = 4;
-                this.cols = 2;
+                this.rows = 2;
+                this.cols = 4;
+                this.showSecs = 7
+                this.pickSecs = 40
                 break;
             default:
                 this.rows = 4;
                 this.cols = 4;
+                this.showSecs = 5
+                this.pickSecs = 30
                 break;
         }
 
@@ -169,31 +178,34 @@ class Game {
 
     showPicsTimer() {
         const showTimer = document.querySelector(".showTimer");
-        // showTimer.style.dispaly = "block";
-        switch (this.selectedLevel) {
-            case "Medium":
-                this.seconds = 5;
-                break;
-            case "Hard":
-                this.seconds = 3;
-                break;
-            case "Easy":
-                this.seconds = 7;
-                break;
-            default:
-                this.seconds = 5;
-                break;
-        }
-        let timerId = setInterval(() => {
-            this.seconds -= 1;
-            showTimer.textContent = this.seconds;
-            if (this.seconds <= 1) {
-                clearInterval(timerId);
+        const flipCards = document.querySelectorAll(".flip-card")
+            // showTimer.style.dispaly = "block";
+        const firstShowTimer = setInterval(() => {
+            this.showSecs -= 1;
+            showTimer.textContent = this.showSecs;
+            if (this.showSecs < 1) {
+                clearInterval(firstShowTimer);
                 this.deactiveStateFlip()
                 this.canItemsSelect = true
+                this.runGameTimer()
             }
 
         }, 1000);
+
+
+    }
+    runGameTimer() {
+        const gameTimer = setInterval(() => {
+            this.pickSecs -= 1
+            if (flipCards.length > 0 && this.pickSecs > 0) return
+
+            if (flipCards.length < 1 && this.pickSecs < 1) {
+                console.log("You Win")
+            } else {
+                console.log("You Lost")
+            }
+            clearInterval(gameTimer)
+        }, 1000)
     }
     checkActiveItems() {
         const actives = document.querySelectorAll(".active")
@@ -209,11 +221,11 @@ class Game {
                     element.remove()
                     this.activeItems--
                 })
-            } else
+
+            } else {
                 this.deactiveStateFlip()
+            }
         }, 1000);
-
-
 
     }
     resetGame() {
@@ -221,7 +233,7 @@ class Game {
         container.innerHTML = ""
         this.selectedLevel = null;
         this.responseData = null;
-        this.seconds = null;
+        this.showSecs = null;
         this.rows = null;
         this.cols = null;
         this.itemCount = null;
