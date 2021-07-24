@@ -1,3 +1,4 @@
+import Modal from "./modal.js"
 class Game {
     options;
     selectedLevel;
