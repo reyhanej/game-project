@@ -1,4 +1,4 @@
-import Modal from "./modal.js"
+// import Modal from "./modal.js"
 class Game {
     options;
     selectedLevel;
@@ -22,13 +22,15 @@ class Game {
         const playNode = document.querySelector(playBtn);
         if (!playNode) throw new Error("Can`t find play button in your DOM ");
         playNode.addEventListener("click", () => {
+            document.querySelector(".how-to-container").remove()
+            const loading = document.querySelector(".loading-container")
+            loading.style.display = "flex"
             if (playNode.textContent === "Play") {
                 this.play();
                 playNode.textContent = "Reset"
             } else {
                 this.resetGame()
             }
-
         });
     }
     play() {
@@ -42,6 +44,7 @@ class Game {
         this.createPicElements();
 
     }
+
     async createPicElements() {
         await this.getImages()
         for (let i = 0; i < this.rows; i++) {
@@ -179,7 +182,8 @@ class Game {
 
     showPicsTimer() {
         const showTimer = document.querySelector(".showTimer");
-        const flipCards = document.querySelectorAll(".flip-card")
+        const loading = document.querySelector(".loading-container")
+        loading.style.display = "none"
             // showTimer.style.dispaly = "block";
         const firstShowTimer = setInterval(() => {
             this.showSecs -= 1;
@@ -196,6 +200,8 @@ class Game {
 
     }
     runGameTimer() {
+        const flipCards = document.querySelectorAll(".flip-card")
+
         const gameTimer = setInterval(() => {
             this.pickSecs -= 1
             if (flipCards.length > 0 && this.pickSecs > 0) return

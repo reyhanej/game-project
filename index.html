@@ -10,12 +10,11 @@
 
 
 <body>
-    <!-- <div class="loading">
-        Loading the game please wait...
+    <div class="loading-container">
+        <div class="loading">
+            Loading the game please wait...
+        </div>
     </div>
-    <div class="modal-wrapper">
-        <div class="modal"></div>
-    </div> -->
     <div class="main">
         <div class="hardness">
             <span id="hardtxt"></span>
@@ -28,10 +27,29 @@
         <div class="play">Play</div>
         <div class="showTimer"></div>
     </div>
+    <div class="modal">
+        <div class="modal-wrapper">
+            <h3 class="modal-title">Win</h3>
+            <hr>
+            <div class="modal-text">You have Won the game</div>
+            <button id="ok">Ok</button>
+        </div>
+    </div>
+    <div class="how-to-container">
+        <span class="how-to-title">
+            How to play?
+        </span>
+        <div class="how-to-text">
+            First of all , you can choose the level of hardness (it has set on medium level as default).<br> When you click on "play" button a bunch of cards will be shown to you for a few seconds(the time is depended on the level you have chosen).
+            <br>Then you can match the two similar cards by clicking on them during a specified time. <br>If you match all the cards in time , you will win the game.
+        </div>
+
+    </div>
     <div class="container"></div>
     <script src="./axios.min.js"></script>
     <script src="./game.js"></script>
     <script src="./script.js"></script>
+    <script src="./modal.js"></script>
 </body>
 
 </html>

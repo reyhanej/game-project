@@ -2,6 +2,7 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    font-family: cursive;
 }
 
 a {
@@ -21,19 +22,19 @@ a {
 .hardness {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     padding: 15px;
-    width: 10.5rem;
-    height: 4.25rem;
-    margin: 15px;
+    width: 9.5rem;
+    height: 3.25rem;
+    margin: 10px;
     background-color: #448AFF;
     border: 1px solid #448AFF;
-    border-radius: 8px;
+    border-radius: 12px;
     text-align: center;
-    font-family: cursive;
     font-size: 1.5rem;
     cursor: pointer;
-    position: absolute
+    position: relative;
+    top: -100px;
 }
 
 .showTimer {
@@ -48,7 +49,6 @@ a {
     border: 1px solid #448AFF;
     border-radius: 8px;
     text-align: center;
-    font-family: cursive;
     font-size: 1.5rem;
     cursor: pointer;
     display: none;
@@ -58,10 +58,8 @@ a {
     text-align: center;
     position: absolute;
     padding-top: 10px;
-    top: 60px;
-    left: 10%;
-    transform: translateX(-75%);
-    width: 10%;
+    top: 45px;
+    width: 100%;
     display: none;
 }
 
@@ -86,13 +84,13 @@ a {
 .flip-card {
     background-color: transparent;
     max-width: 85%;
-    width: 85%;
+    width: 15%;
     height: 100%;
-    border: 1px solid #F5F5F5;
     perspective: 1000px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin: 10px;
+    border-radius: 12px;
+    /* display: grid;
+    column-gap: 50px; */
 }
 
 .flip-card-inner {
@@ -119,7 +117,7 @@ a {
 }
 
 .flip-card-front {
-    background-color: dodgerblue;
+    background-color: rgb(23, 126, 230);
     color: black;
 }
 
@@ -138,40 +136,109 @@ a {
 }
 
 .row {
-    margin: 15px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+    width: 80%;
     flex-grow: 1;
     max-height: 200px;
+    margin-bottom: 20px;
 }
 
 .container {
-    background-color: white;
     width: 100%;
     max-width: 1500px;
     height: 80vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    column-gap: 50px;
+}
+
+.loading-container {
+    display: none;
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 900px;
+    background: rgba(115, 182, 190, 0.7);
+    position: fixed;
+    z-index: 100;
 }
 
 .loading {
     width: 100%;
     height: 100%;
-    display: block;
-    z-index: 100;
-    position: fixed;
-    background: rgba(115, 182, 190, 0.7);
+    position: relative;
+    top: 250px;
     text-align: center;
-    font-family: cursive;
     font-size: 3rem;
-    align-items: center;
-    /* justify-content: center; */
+}
+
+.modal-back {
+    background-color: rgba(104, 137, 141, 0.7);
 }
 
 .modal {
     display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-wrapper {
+    width: 50%;
+    height: 30vh;
+    background-color: rgb(85, 188, 202);
+    border: 1px solid #44caff;
+    border-radius: 8px;
+    display: block;
+    text-align: center;
+    z-index: 100;
+    color: white;
+}
+
+.modal-title {
+    height: 40px;
+    position: relative;
+    top: 10px;
+}
+
+.modal-text {
+    padding: 10px;
+    margin: 20px;
+}
+
+.modal-wrapper button {
+    width: 3.5rem;
+    height: 2rem;
+    background-color: #1c7888;
+    border-radius: 8px;
+    font-size: 16px;
+    border: .5px solid #5aacdb;
+    color: white;
+}
+
+hr {
+    width: 70%;
+    position: relative;
+    left: 15%;
+}
+
+.how-to-container {
+    width: 50%;
+    height: 40vh;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+    left: 25%;
+    margin-top: -8rem;
+}
+
+.how-to-title {
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.how-to-text {
+    font-size: 1.05rem;
 }
