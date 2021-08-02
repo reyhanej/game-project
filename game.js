@@ -125,14 +125,20 @@ class Game {
             case "Hard":
                 this.rows = 6;
                 this.cols = 4;
-                this.showSecs = 3
+                this.showSecs = 5
                 this.pickSecs = 40
                 break;
             case "Easy":
                 this.rows = 3;
                 this.cols = 4;
-                this.showSecs = 7
+                this.showSecs = 5
                 this.pickSecs = 50
+                break;
+            case "Iran":
+                this.rows = 8;
+                this.cols = 6;
+                this.showSecs = 4
+                this.pickSecs = 30
                 break;
             case "Medium":
             default:
