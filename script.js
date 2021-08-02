@@ -9,8 +9,15 @@ for (let i = 0; i < hardshipitems.length; i++) {
         hardtxt.textContent = hardshipitems[i].textContent
     })
 }
-
+const resetGame = () => {
+    new Game({
+        level: "#hardtxt",
+        playBtn: ".play",
+        timerElement: ".showTimer"
+    })
+}
 new Game({
     level: "#hardtxt",
-    playBtn: ".play"
+    playBtn: ".play",
+    timerElement: ".showTimer"
 })

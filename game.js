@@ -1,4 +1,49 @@
 // import Modal from "./modal.js"
+
+class Modal {
+    body
+    modal
+    constructor(options) {
+        this.options = options
+        const { title, text } = this.options
+        this.setModalPropeties(title, text)
+        this.setStyles()
+        this.setBtnSettings()
+    }
+    setModalPropeties(title, text) {
+        const modalTitle = document.querySelector(".modal-title")
+        const modalText = document.querySelector(".modal-text")
+        modalTitle.textContent = title
+        modalText.textContent = text
+    }
+    setStyles() {
+        this.modal = document.querySelector(".modal")
+        this.modal.style.display = "flex"
+        this.body = document.querySelector("body")
+        this.body.classList.add("modal-back")
+    }
+    setBtnSettings() {
+        const yesBtn = document.querySelector("#yes")
+        const noBtn = document.querySelector("#no")
+        yesBtn.addEventListener("click", e => {
+            this.body.classList.remove("modal-back")
+            const container = document.querySelector(".container")
+            container.innerHTML = ""
+            this.modal.style.display = "none"
+        })
+        noBtn.addEventListener("click", e => {
+            this.modal.style.display = "none"
+            window.alert("That`s Ok , we appreciate your time . Please visit Us again.")
+
+            setTimeout(() => {
+                window.close()
+            }, 1000)
+
+        })
+
+
+    }
+}
 class Game {
     options;
     selectedLevel;
@@ -11,18 +56,25 @@ class Game {
     imgLoadedCounter = 0;
     activeItems = 0
     canItemsSelect = false
+    pickInterval
+    showInterval
     constructor(options) {
         this.options = options;
         this.initializeGame();
     }
     initializeGame() {
-        const { playBtn } = this.options;
-
+        const { playBtn, timerElement } = this.options;
         if (!playBtn) throw new Error("play button class name is not defined");
         const playNode = document.querySelector(playBtn);
         if (!playNode) throw new Error("Can`t find play button in your DOM ");
+
+        if (!timerElement) throw new Error("timer element class name is not defined");
+        const timerNode = document.querySelector(timerElement);
+        if (!timerNode) throw new Error("Can`t find timer element in your DOM ");
+
         playNode.addEventListener("click", () => {
-            document.querySelector(".how-to-container").remove()
+            const howToContainer = document.querySelector(".how-to-container")
+            if (howToContainer) howToContainer.remove()
             const loading = document.querySelector(".loading-container")
             loading.style.display = "flex"
             if (playNode.textContent === "Play") {
@@ -54,6 +106,7 @@ class Game {
                 const flipCard = this.createItem()
                 row.appendChild(flipCard)
             }
+            document.querySelector(".container").style.display = "grid"
             document.querySelector(".container").appendChild(row)
         }
         const checkInterval = setInterval(() => {
@@ -69,29 +122,24 @@ class Game {
     }
     setLevelSpecifiedProperties() {
         switch (this.selectedLevel) {
-            case "Medium":
-                this.rows = 4;
-                this.cols = 4;
-                this.showSecs = 5
-                this.pickSecs = 30
-                break;
             case "Hard":
-                this.rows = 5;
+                this.rows = 6;
                 this.cols = 4;
                 this.showSecs = 3
-                this.pickSecs = 20
-                break;
-            case "Easy":
-                this.rows = 2;
-                this.cols = 4;
-                this.showSecs = 7
                 this.pickSecs = 40
                 break;
+            case "Easy":
+                this.rows = 3;
+                this.cols = 4;
+                this.showSecs = 7
+                this.pickSecs = 50
+                break;
+            case "Medium":
             default:
                 this.rows = 4;
                 this.cols = 4;
                 this.showSecs = 5
-                this.pickSecs = 30
+                this.pickSecs = 45
                 break;
         }
 
@@ -181,15 +229,17 @@ class Game {
     }
 
     showPicsTimer() {
-        const showTimer = document.querySelector(".showTimer");
+        const { timerElement } = this.options
+        const showTimer = document.querySelector(timerElement)
+        showTimer.style.visibility = "visible"
         const loading = document.querySelector(".loading-container")
         loading.style.display = "none"
-            // showTimer.style.dispaly = "block";
-        const firstShowTimer = setInterval(() => {
+        this.showInterval = setInterval(() => {
             this.showSecs -= 1;
-            showTimer.textContent = this.showSecs;
+            showTimer.textContent = `Hint Time : ${this.showSecs}`;
             if (this.showSecs < 1) {
-                clearInterval(firstShowTimer);
+                showTimer.style.visibility = "hidden"
+                clearInterval(this.showInterval);
                 this.deactiveStateFlip()
                 this.canItemsSelect = true
                 this.runGameTimer()
@@ -199,19 +249,29 @@ class Game {
 
 
     }
-    runGameTimer() {
-        const flipCards = document.querySelectorAll(".flip-card")
+    showModal(title, text) {
+        const newModal = new Modal({ title, text })
 
-        const gameTimer = setInterval(() => {
+    }
+    runGameTimer() {
+        const { timerElement } = this.options
+        const showTimer = document.querySelector(timerElement)
+        showTimer.style.visibility = "visible"
+        this.pickInterval = setInterval(() => {
+            const flipCards = document.querySelectorAll(".flip-card-inner")
+            showTimer.textContent = `Remained Time : ${this.pickSecs}`
             this.pickSecs -= 1
             if (flipCards.length > 0 && this.pickSecs > 0) return
 
-            if (flipCards.length < 1 && this.pickSecs < 1) {
-                console.log("You Win")
+            if (flipCards.length < 1 && this.pickSecs > 1) {
+                this.showModal('You Won!', 'You have won the game , Want to play again?')
             } else {
-                console.log("You Lost")
+                this.showModal('You Lost!', "You have lost the game , Want to play again?")
+
             }
-            clearInterval(gameTimer)
+            clearInterval(this.pickInterval)
+            showTimer.style.visibility = "hidden"
+
         }, 1000)
     }
     checkActiveItems() {
@@ -224,6 +284,7 @@ class Game {
 
         setTimeout(() => {
             if (ids.every(v => v === ids[0])) {
+
                 actives.forEach(element => {
                     element.remove()
                     this.activeItems--
@@ -243,10 +304,14 @@ class Game {
         this.showSecs = null;
         this.rows = null;
         this.cols = null;
+        this.showSecs = null
+        this.pickSecs = null
         this.itemCount = null;
         this.imgLoadedCounter = 0;
         this.activeItems = 0
         this.canItemsSelect = false
+        if (this.pickInterval) clearInterval(this.pickInterval)
+        if (this.showInterval) clearInterval(this.showInterval)
         this.play()
     }
 }
